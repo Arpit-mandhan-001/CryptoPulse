@@ -1,172 +1,183 @@
-import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
-import React, { useState } from 'react'
-import { auth, provider } from '../../firebase';
-import { useDispatch } from 'react-redux';
-import { setactiveuser } from '../../Utils/userSlice';
-import { Icon } from 'react-icons-kit';
-import { eyeOff } from 'react-icons-kit/feather/eyeOff';
-import { eye } from 'react-icons-kit/feather/eye'
+import { signInWithPopup } from "firebase/auth";
+import React, { useState } from "react";
+import { auth, provider } from "../../firebase";
+import { useDispatch } from "react-redux";
+import { setactiveuser } from "../../Utils/userSlice";
+import { Icon } from "react-icons-kit";
+import { eyeOff } from "react-icons-kit/feather/eyeOff";
+import { eye } from "react-icons-kit/feather/eye";
+
 const Signup = ({ closemodal }) => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [type, setType] = useState('password');
-    const [icon, setIcon] = useState(eyeOff);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [type, setType] = useState("password");
+  const [icon, setIcon] = useState(eyeOff);
 
-    const dispatch = useDispatch();
-    const handlesubmit = async () => {
-        if (password !== confirmPassword) {
-            alert("passwords do not match.");
-            return;
-        }
-        try {
-            const result = await createUserWithEmailAndPassword(auth, email, password);
-            console.log(result);
-            alert("Signup Successful! Now you can Login");
-            closemodal();
-        }
-        catch (error) {
-            alert(error.message)
-        }
+  const dispatch = useDispatch();
+
+  const handleToggle = () => {
+    if (type === "password") {
+      setIcon(eye);
+      setType("text");
+    } else {
+      setIcon(eyeOff);
+      setType("password");
     }
-    const handlegooglesignin = async () => {
-        try {
-            const result = await signInWithPopup(auth, provider);
-            console.log(result);
-            dispatch(setactiveuser({
-                user: result.user
-            }))
-            alert('Google sign-in successful');
-            closemodal();
-        }
-        catch (error) {
-            alert('Google sign-in error:', error.message);
-        }
-    };
-    const handleToggle = () => {
-        if (type === 'password') {
-            setIcon(eye);
-            setType('text')
-        } else {
-            setIcon(eyeOff)
-            setType('password')
-        }
+  };
+
+  const handlesubmit = async () => {
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
     }
-    return (
-        <div className='flex flex-col gap-[10px] items-center w-full '>
-            <input type="text" placeholder='  Enter Email' className='w-full  text-black' onChange={(e) => setEmail(e.target.value)} />
-            <div className='w-full' style={{ position: "relative" }}>
-                <div className='w-full '>
-                    <input type={type} placeholder='  Enter password' className='w-full text-black' onChange={(e) => setPassword(e.target.value)} />
-                </div>
-                <div style={{ position: "absolute", right: 9, top: -3, filter: "invert(100%)" }} onClick={handleToggle}>
-                    <Icon icon={icon} size={20} />
-                </div>
-            </div>
+    try {
+      alert("Signup Successful! Now you can Login");
+      closemodal();
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
-            <input type="text" placeholder='  Confirm password' className='w-full text-black' onChange={(e) => setConfirmPassword(e.target.value)} />
-            <button className='w-full' style={{ backgroundColor: "rgb(66, 133, 244)", color: "white" }} onClick={handlesubmit}>Submit</button>
-            <p>OR</p>
-            <div onClick={handlegooglesignin}
-                type="dark"
-                tabIndex="0"
-                role="button"
-                style={{
-                    backgroundColor: 'rgb(66, 133, 244)',
-                    color: 'rgb(255, 255, 255)',
-                    height: '50px',
-                    width: '100%',
-                    border: 'none',
-                    textAlign: 'center',
-                    boxShadow: 'rgba(0, 0, 0, 0.25) 0px 2px 4px 0px',
-                    fontSize: '16px',
-                    lineHeight: '48px',
-                    display: 'block',
-                    borderRadius: '1px',
-                    transition: 'background-color 0.218s ease 0s, border-color 0.218s ease 0s, box-shadow 0.218s ease 0s',
-                    fontFamily: 'Roboto, arial, sans-serif',
-                    cursor: 'pointer',
-                    userSelect: 'none',
-                    outline: 'none'
-                }}
-            >
-                <div
-                    style={{
-                        width: '48px',
-                        height: '48px',
-                        textAlign: 'center',
-                        display: 'block',
-                        marginTop: '1px',
-                        marginLeft: '1px',
-                        float: 'left',
-                        backgroundColor: 'rgb(255, 255, 255)',
-                        borderRadius: '1px',
-                        whiteSpace: 'nowrap'
-                    }}
-                >
-                    <svg
-                        version="1.1"
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="46px"
-                        height="46px"
-                        viewBox="0 0 46 46"
-                        style={{
-                            width: '48px',
-                            height: '48px',
-                            display: 'block'
-                        }}
-                    >
-                        <defs>
-                            <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-1">
-                                <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
-                                <feGaussianBlur stdDeviation="0.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
-                                <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.168 0" in="shadowBlurOuter1" type="matrix" result="shadowMatrixOuter1"></feColorMatrix>
-                                <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter2"></feOffset>
-                                <feGaussianBlur stdDeviation="0.5" in="shadowOffsetOuter2" result="shadowBlurOuter2"></feGaussianBlur>
-                                <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.084 0" in="shadowBlurOuter2" type="matrix" result="shadowMatrixOuter2"></feColorMatrix>
-                                <feMerge>
-                                    <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
-                                    <feMergeNode in="shadowMatrixOuter2"></feMergeNode>
-                                    <feMergeNode in="SourceGraphic"></feMergeNode>
-                                </feMerge>
-                            </filter>
-                            <rect id="path-2" x="0" y="0" width="40" height="40" rx="2"></rect>
-                            <rect id="path-3" x="5" y="5" width="38" height="38" rx="1"></rect>
-                        </defs>
-                        <g id="Google-Button" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-                            <g id="9-PATCH" transform="translate(-608.000000, -219.000000)"></g>
-                            <g id="btn_google_dark_normal" transform="translate(-1.000000, -1.000000)">
-                                <g id="button" transform="translate(4.000000, 4.000000)" filter="url(#filter-1)">
-                                    <g id="button-bg">
-                                        <use fill="#4285F4" fillRule="evenodd"></use>
-                                        <use fill="none"></use>
-                                        <use fill="none"></use>
-                                        <use fill="none"></use>
-                                    </g>
-                                </g>
-                                <g id="button-bg-copy">
-                                    <use fill="#FFFFFF" fillRule="evenodd"></use>
-                                    <use fill="none"></use>
-                                    <use fill="none"></use>
-                                    <use fill="none"></use>
-                                </g>
-                                <g id="logo_googleg_48dp" transform="translate(15.000000, 15.000000)">
-                                    <path d="M17.64,9.20454545 C17.64,8.56636364 17.5827273,7.95272727 17.4763636,7.36363636 L9,7.36363636 L9,10.845 L13.8436364,10.845 C13.635,11.97 13.0009091,12.9231818 12.0477273,13.5613636 L12.0477273,15.8195455 L14.9563636,15.8195455 C16.6581818,14.2527273 17.64,11.9454545 17.64,9.20454545 L17.64,9.20454545 Z" id="Shape" fill="#4285F4"></path>
-                                    <path d="M9,18 C11.43,18 13.4672727,17.1940909 14.9563636,15.8195455 L12.0477273,13.5613636 C11.2418182,14.1013636 10.2109091,14.4204545 9,14.4204545 C6.65590909,14.4204545 4.67181818,12.8372727 3.96409091,10.71 L0.957272727,10.71 L0.957272727,13.0418182 C2.43818182,15.9831818 5.48181818,18 9,18 L9,18 Z" id="Shape" fill="#34A853"></path>
-                                    <path d="M3.96409091,10.71 C3.78409091,10.17 3.68181818,9.59318182 3.68181818,9 C3.68181818,8.40681818 3.78409091,7.83 3.96409091,7.29 L3.96409091,4.95818182 L0.957272727,4.95818182 C0.347727273,6.17318182 0,7.54772727 0,9 C0,10.4522727 0.347727273,11.8268182 0.957272727,13.0418182 L3.96409091,10.71 L3.96409091,10.71 Z" id="Shape" fill="#FBBC05"></path>
-                                    <path d="M9,3.57954545 C10.3213636,3.57954545 11.5077273,4.03363636 12.4404545,4.92545455 L15.0218182,2.34409091 C13.4631818,0.891818182 11.4259091,0 9,0 C5.48181818,0 2.43818182,2.01681818 0.957272727,4.95818182 L3.96409091,7.29 C4.67181818,5.16272727 6.65590909,3.57954545 9,3.57954545 L9,3.57954545 Z" id="Shape" fill="#EA4335"></path>
-                                    <path d="M0,0 L18,0 L18,18 L0,18 L0,0 Z" id="Shape"></path>
-                                </g>
-                                <g id="handles_square"></g>
-                            </g>
-                        </g>
-                    </svg>
-                </div>
-                <span className='text-sm sm:text-base'>Sign in with Google</span>
-            </div>
+  const handlegooglesignin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      dispatch(
+        setactiveuser({
+          user: result.user,
+        })
+      );
+      alert("Google sign-in successful");
+      closemodal();
+    } catch (error) {
+      alert("Google sign-in error: " + error.message);
+    }
+  };
 
-        </ div>
-    )
-}
+  return (
+    <div className="flex flex-col gap-6 max-w-md w-full mx-auto p-8 bg-white rounded-xl shadow-lg">
+      <h2 className="text-3xl font-bold text-blue-600 text-center">
+        Create Account
+      </h2>
 
-export default Signup
+      {/* Email Input */}
+      <div>
+        <label htmlFor="email" className="block mb-1 font-medium text-gray-700">
+          Email
+        </label>
+        <input
+          id="email"
+          type="email"
+          placeholder="Enter Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-black bg-white"
+        />
+      </div>
+
+      {/* Password input with eye toggle */}
+      <div className="relative">
+        <label
+          htmlFor="password"
+          className="block mb-1 font-medium text-gray-700"
+        >
+          Password
+        </label>
+        <input
+          id="password"
+          type={type}
+          placeholder="Enter password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10 text-black bg-white"
+        />
+        <div
+          style={{
+            position: "absolute",
+            right: 9,
+            top: 8,
+            filter: "invert(100%)",
+            cursor: "pointer",
+          }}
+          onClick={handleToggle}
+          aria-label={type === "password" ? "Show password" : "Hide password"}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") handleToggle();
+          }}
+        >
+          <Icon icon={icon} size={20} />
+        </div>
+      </div>
+
+      {/* Confirm Password Input */}
+      <div>
+        <label
+          htmlFor="confirmPassword"
+          className="block mb-1 font-medium text-gray-700"
+        >
+          Confirm Password
+        </label>
+        <input
+          id="confirmPassword"
+          type="password"
+          placeholder="Confirm password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-black bg-white"
+        />
+      </div>
+
+      {/* Submit Button */}
+      <button
+        onClick={handlesubmit}
+        className="w-full py-3 mt-2 bg-blue-600 text-white rounded-lg font-semibold shadow-md hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        Submit
+      </button>
+
+      {/* Separator */}
+      <p className="text-center text-gray-400 text-sm mt-4">OR</p>
+
+      {/* Google Sign-in Button */}
+      <button
+        onClick={handlegooglesignin}
+        tabIndex="0"
+        className="flex items-center justify-center w-full py-2 bg-white border border-gray-300 rounded-lg shadow hover:bg-gray-50 transition duration-200"
+        style={{ outline: "none" }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 48 48"
+          className="mr-2"
+        >
+          <g>
+            <path
+              fill="#4285F4"
+              d="M24 9.5c3.54 0 6.73 1.23 9.24 3.25l6.91-6.91C36.53 2.34 30.64 0 24 0 14.64 0 6.27 5.64 1.91 14.02l8.51 6.62C12.89 13.41 17.97 9.5 24 9.5z"
+            />
+            <path
+              fill="#34A853"
+              d="M46.09 24.56c0-1.64-.15-3.22-.44-4.76H24v9.04h12.41c-.54 2.91-2.17 5.38-4.62 7.04l7.19 5.59C43.73 37.36 46.09 31.47 46.09 24.56z"
+            />
+            <path
+              fill="#FBBC05"
+              d="M10.42 28.64c-.56-1.67-.88-3.44-.88-5.29s.32-3.62.88-5.29l-8.51-6.62C.32 15.38 0 19.53 0 24s.32 8.62 1.91 12.56l8.51-6.62z"
+            />
+            <path
+              fill="#EA4335"
+              d="M24 48c6.64 0 12.53-2.19 16.91-5.97l-7.19-5.59c-2.01 1.35-4.59 2.15-7.72 2.15-6.03 0-11.11-3.91-12.89-9.14l-8.51 6.62C6.27 42.36 14.64 48 24 48z"
+            />
+            <path fill="none" d="M0 0h48v48H0z" />
+          </g>
+        </svg>
+        <span className="text-gray-700 font-medium">Sign in with Google</span>
+      </button>
+    </div>
+  );
+};
+
+export default Signup;
