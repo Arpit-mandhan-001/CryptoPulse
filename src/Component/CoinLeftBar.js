@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SingleCoin } from '../Api';
-import ReactHtmlParser from 'react-html-parser';
+import parse from 'html-react-parser';
 import { useSelector } from 'react-redux';
 import { selectuser } from '../Utils/userSlice';
 import { doc, setDoc } from 'firebase/firestore';
@@ -86,7 +86,7 @@ const CoinLeftBar = () => {
         <h3 className="text-3xl lg:text-3xl font-bold mb-2">{coin.name}</h3>
       </div>
       <div className="w-full flex flex-col items-start gap-4 mt-4 border-t border-[#87CEEB]/20 pt-4">
-        <p className="text-sm lg:text-base line-clamp-3">{ReactHtmlParser(coin.description.en.split('. ')[0])}.</p>
+        <p className="text-sm lg:text-base line-clamp-3">{parse(coin.description.en.split('. ')[0])}.</p>
         <div className="text-lg w-full border-b border-[#87CEEB]/10 pb-2">
           <span className="font-semibold">Rank:</span> {coin.market_cap_rank}
         </div>
